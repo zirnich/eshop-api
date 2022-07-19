@@ -1,5 +1,5 @@
 const { nanoid } = require("nanoid");
-const InvariantError = require("../../exceptions/InvarianError");
+const InvariantError = require("../../exceptions/InvariantError");
 const NotFoundError = require("../../exceptions/NotFoundError");
 
 class ProductsService {
@@ -8,7 +8,7 @@ class ProductsService {
     constructor(database) {
       this.#database = database;
     }
-    async addProduct(title, price, description) {
+    async addProduct(userId, title, price, description) {
         const id = `product-${nanoid(16)}`
         const query = `INSERT INTO products (id, title, price, description, image)
           VALUES (
@@ -41,7 +41,7 @@ class ProductsService {
     
         return result;
       }
-      async updateProductById(id, {title, price, description}) {
+      async updateProductById(id,userId, {title, price, description}) {
         const queryProduct = `SELECT id FROM products WHERE id = '${id}'`;
     
         const product = await this.#database.query(queryProduct);
@@ -62,7 +62,7 @@ class ProductsService {
           throw new InvariantError('Gagal memperbarui produk');
         }
       }
-      async deleteProductById(id) {
+      async deleteProductById(id, userId) {
         const query = `DELETE FROM products WHERE id = '${id}'`;
     
         const result = await this.#database.query(query);
