@@ -1,5 +1,6 @@
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
+const Jwt = require('@hapi/jwt');
 
 //
 const authentication = require('./api/authentication');
@@ -12,6 +13,8 @@ const products = require('./api/products');
 const ProductsService = require('./services/mysql/ProductsService');
 const ProductsValidator = require('./validator/products');
 const ClientError = require('./exceptions/ClientError');
+
+
 
 const init = async () => {
   const database = new Database();
@@ -53,6 +56,28 @@ const init = async () => {
 
     return h.continue;
   });
+
+  // register external plugin
+  await server.register([
+    {
+      plugin: Jwt,
+    },
+  ]);
+  // defines authentication strategy
+  server.auth.strategy('eshop_jwt', 'jwt',{
+    keys: process.env.TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
+  });
   //defines internal plugin
   await server.register([
     {
@@ -71,6 +96,7 @@ const init = async () => {
       }
     },
   ]);
+  
 
   await server.start();
   console.log(`Server running at ${server.info.uri}`);
