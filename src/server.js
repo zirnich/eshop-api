@@ -23,6 +23,9 @@ const CartsValidator = require('./validator/carts');
 const transactions = require('./api/transactions');
 const TransactionsService = require('./services/mysql/TransactionsService');
 
+// storage
+const StorageService = require('./services/storage/StorageService');
+const path = require('path');
 
 
 
@@ -32,6 +35,7 @@ const init = async () => {
   const productsService = new ProductsService(database);
   const cartsService = new CartsService(database);
   const transactionsService = new TransactionsService(database);
+  const storageService = new StorageService(path.resolve(__dirname, '/api/products/images'));
 
   const server = Hapi.server({
     host: process.env.HOST,
@@ -90,7 +94,7 @@ const init = async () => {
       },
     }),
   });
-  //defines internal plugin
+  //defines register internal plugin
   await server.register([
     {
       plugin: authentication,
@@ -103,7 +107,8 @@ const init = async () => {
     {
       plugin: products,
       options: {
-        service: productsService,
+        productsService,
+        storageService ,
         validator: ProductsValidator,
       },
     },

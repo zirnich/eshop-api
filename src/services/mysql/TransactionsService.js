@@ -1,4 +1,5 @@
 const { nanoid } = require("nanoid");
+const NotFoundError = require("../../exceptions/NotFoundError");
 class TransactionsService {
     #database;
   
