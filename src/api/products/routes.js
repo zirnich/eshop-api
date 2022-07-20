@@ -1,4 +1,5 @@
-const path = require('path');
+const path = require('path'); // import path untuk mengakses folder tempat menyimpan file gambar produk
+
 
 const routes = (handler) => [
   {
@@ -46,6 +47,15 @@ const routes = (handler) => [
         multipart: true,
         output: 'stream',
         maxBytes: 512000,
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/products/image/{param*}',
+    handler: {
+      directory: {
+        path: path.resolve(__dirname, 'images'),
       },
     },
   },

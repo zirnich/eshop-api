@@ -13,6 +13,7 @@ const ProductImageHeaderSchema = Joi.object({
       'image/gif',
       'image/jpeg',
       'image/png',
+      'image/jpg',
       'image/webp').required(),
 }).unknown();
 
